@@ -24,6 +24,103 @@
 
 ;;; Code:
 
+(defgroup forget-me-not nil
+  "The forget-me-not Emacs theme."
+  :group 'faces)
+
+(defcustom fmn-enable-bold t
+  "If nil, suppress bold weights added by the Doom-style extensions."
+  :type 'boolean :group 'forget-me-not)
+
+(defcustom fmn-enable-italic t
+  "If nil, suppress italic slants added by the Doom-style extensions."
+  :type 'boolean :group 'forget-me-not)
+
+(defconst fmn-palette
+  '((bg                  . "#add8e6")
+    (fg                  . "#000000")
+    (black               . "#000000")
+    (white               . "#ffffff")
+    (darkgrey            . "#607a80")
+    (grey                . "#b0cad0")
+    (grey1               . "#9dc8d6")
+    (grey2               . "#b7e1ef")
+    (non-text            . "#6d98a6")
+    (comment             . "#707878")
+    (red                 . "#af0000")
+    (bright-red          . "#c70000")
+    (green               . "#007a00")
+    (bright-green        . "#009a00")
+    (yellow              . "#9f5f2f")
+    (bright-yellow       . "#c0772f")
+    (yellow1             . "#875f00")
+    (yellow2             . "#af5f00")
+    (blue                . "#002faf")
+    (bright-blue         . "#003fcd")
+    (magenta             . "#870087")
+    (bright-magenta      . "#aa00aa")
+    (cyan                . "#004f5f")
+    (bright-cyan         . "#006a7f")
+    (purple              . "#5700c7")
+    (match-paren         . "#ef009f")
+    (match               . "#d7a7d7")
+    (region              . "#0087d7")
+    (highlight           . "#005faf")
+    (hl-line             . "#a0cbd8")
+    (header-line         . "#9dc8d6")
+    (mode-line-active    . "#eee8aa")
+    (mode-line-inactive  . "#bfecf6")
+    (menu                . "#9dc8d6")
+    (code-block          . "#b7e1ef")
+    (diff-added-bg       . "#a7d7b7")
+    (diff-added-fg       . "#005f00")
+    (diff-removed-bg     . "#d7b7b7")
+    (diff-removed-fg     . "#5f0000")
+    (diff-changed-bg     . "#d7d5af")
+    (diff-changed-fg     . "#5f5f00")
+    (hi-yellow           . "#ffffd7")
+    (hi-pink             . "#ffafd7")
+    (hi-blue             . "#87d7ff")
+    (hi-green            . "#d7ffd7")
+    (hi-salmon           . "#ffd7af")
+    (hi-aquamarine       . "#d7ffff"))
+  "Color palette exposed as data for downstream use.
+This mirrors the values bound inside the theme's own `let*'.")
+
+(defconst fmn-semantic
+  '((keyword      . blue)
+    (string       . magenta)
+    (constant     . bright-blue)
+    (function     . red)
+    (variable     . cyan)
+    (type         . purple)
+    (builtin      . bright-magenta)
+    (operator     . darkgrey)
+    (number       . bright-blue)
+    (preprocessor . yellow2)
+    (doc          . comment)
+    (error        . bright-red)
+    (warning      . yellow2)
+    (success      . green))
+  "Doom-style semantic aliases mapping role names to palette keys.")
+
+(defun fmn-color (name)
+  "Return the hex string for color NAME in `fmn-palette'."
+  (or (cdr (assq name fmn-palette))
+      (user-error "Unknown forget-me-not color: %s" name)))
+
+(defun fmn-ref (name)
+  "Resolve a semantic alias NAME to its underlying hex color."
+  (fmn-color
+   (or (cdr (assq name fmn-semantic))
+       (user-error "Unknown forget-me-not semantic alias: %s" name))))
+
+(defmacro fmn-with-colors (vars &rest body)
+  "Bind each symbol in VARS to its palette color, then run BODY."
+  (declare (indent 1))
+  `(let ,(mapcar (lambda (v) `(,v (fmn-color ',v))) vars)
+     ,@body))
+
 (deftheme forget-me-not
   "A tribute to light-blue Emacs theme.")
 
@@ -69,7 +166,10 @@
        (hi-green "#d7ffd7")
        (hi-salmon "#ffd7af")
        (hi-aquamarine "#d7ffff")
-       (code-block "#b7e1ef"))
+       (code-block "#b7e1ef")
+       ;; Doom-style extension knobs
+       (fmn-bold   (if fmn-enable-bold   'bold   'normal))
+       (fmn-italic (if fmn-enable-italic 'italic 'normal)))
 
   (custom-theme-set-faces
    'forget-me-not
@@ -1328,7 +1428,152 @@
    `(tempel-field
      ((t (:background ,diff-added-bg))))
    `(tempel-form
-     ((t (:background unspecified))))))
+     ((t (:background unspecified))))
+
+   ;; ------------------------------------------------------------------
+   ;; Tree-sitter (Emacs 29+ native): font-lock-*-face gap fillers.
+   ;; The faces already styled higher up in this file (bracket, delimiter,
+   ;; number, function-call, property-use, escape, regexp) are left to
+   ;; upstream's choices.
+   ;; ------------------------------------------------------------------
+   `(font-lock-punctuation-face      ((t (:foreground ,darkgrey))))
+   `(font-lock-misc-punctuation-face ((t (:foreground ,darkgrey))))
+   `(font-lock-operator-face         ((t (:foreground ,darkgrey))))
+   `(font-lock-property-name-face    ((t (:foreground ,cyan))))
+   `(font-lock-variable-use-face     ((t (:foreground ,cyan))))
+   `(font-lock-regexp-grouping-construct ((t (:foreground ,bright-magenta :weight ,fmn-bold))))
+   `(font-lock-regexp-grouping-backslash ((t (:foreground ,bright-magenta))))
+
+   ;; ------------------------------------------------------------------
+   ;; tree-sitter.el (legacy emacs-tree-sitter package)
+   ;; ------------------------------------------------------------------
+   `(tree-sitter-hl-face:function           ((t (:inherit font-lock-function-name-face))))
+   `(tree-sitter-hl-face:function.call      ((t (:foreground ,red))))
+   `(tree-sitter-hl-face:function.builtin   ((t (:inherit font-lock-builtin-face))))
+   `(tree-sitter-hl-face:function.special   ((t (:inherit font-lock-builtin-face :weight ,fmn-bold))))
+   `(tree-sitter-hl-face:function.macro     ((t (:foreground ,bright-magenta))))
+   `(tree-sitter-hl-face:method             ((t (:foreground ,red))))
+   `(tree-sitter-hl-face:method.call        ((t (:foreground ,red))))
+   `(tree-sitter-hl-face:type               ((t (:foreground ,purple))))
+   `(tree-sitter-hl-face:type.parameter     ((t (:foreground ,purple :slant ,fmn-italic))))
+   `(tree-sitter-hl-face:type.argument      ((t (:foreground ,purple))))
+   `(tree-sitter-hl-face:type.builtin       ((t (:inherit font-lock-type-face))))
+   `(tree-sitter-hl-face:type.super         ((t (:foreground ,purple :weight ,fmn-bold))))
+   `(tree-sitter-hl-face:constructor        ((t (:foreground ,purple :weight ,fmn-bold))))
+   `(tree-sitter-hl-face:variable           ((t (:foreground ,cyan))))
+   `(tree-sitter-hl-face:variable.parameter ((t (:foreground ,cyan :slant ,fmn-italic))))
+   `(tree-sitter-hl-face:variable.builtin   ((t (:inherit font-lock-builtin-face))))
+   `(tree-sitter-hl-face:variable.special   ((t (:foreground ,bright-magenta))))
+   `(tree-sitter-hl-face:property           ((t (:foreground ,cyan))))
+   `(tree-sitter-hl-face:property.definition ((t (:foreground ,cyan :weight ,fmn-bold))))
+   `(tree-sitter-hl-face:keyword            ((t (:inherit font-lock-keyword-face))))
+   `(tree-sitter-hl-face:operator           ((t (:foreground ,darkgrey))))
+   `(tree-sitter-hl-face:label              ((t (:foreground ,yellow2))))
+   `(tree-sitter-hl-face:constant           ((t (:inherit font-lock-constant-face))))
+   `(tree-sitter-hl-face:constant.builtin   ((t (:inherit font-lock-builtin-face))))
+   `(tree-sitter-hl-face:number             ((t (:foreground ,bright-blue))))
+   `(tree-sitter-hl-face:string             ((t (:inherit font-lock-string-face))))
+   `(tree-sitter-hl-face:string.special     ((t (:foreground ,bright-magenta))))
+   `(tree-sitter-hl-face:escape             ((t (:foreground ,bright-magenta :weight ,fmn-bold))))
+   `(tree-sitter-hl-face:comment            ((t (:inherit font-lock-comment-face))))
+   `(tree-sitter-hl-face:doc                ((t (:inherit font-lock-doc-face))))
+   `(tree-sitter-hl-face:punctuation        ((t (:foreground ,darkgrey))))
+   `(tree-sitter-hl-face:punctuation.bracket    ((t (:foreground ,darkgrey))))
+   `(tree-sitter-hl-face:punctuation.delimiter  ((t (:foreground ,darkgrey))))
+   `(tree-sitter-hl-face:punctuation.special    ((t (:foreground ,bright-magenta))))
+   `(tree-sitter-hl-face:tag                ((t (:foreground ,blue))))
+   `(tree-sitter-hl-face:attribute          ((t (:foreground ,yellow2))))
+   `(tree-sitter-hl-face:embedded           ((t (:foreground ,bright-cyan))))
+
+   ;; ------------------------------------------------------------------
+   ;; solaire-mode
+   ;; ------------------------------------------------------------------
+   `(solaire-default-face       ((t (:background ,grey2 :foreground ,fg))))
+   `(solaire-hl-line-face       ((t (:background ,hl-line))))
+   `(solaire-org-hide-face      ((t (:foreground ,grey2))))
+   `(solaire-mode-line-face     ((t (:inherit mode-line :background ,mode-line-active))))
+   `(solaire-mode-line-inactive-face ((t (:inherit mode-line-inactive :background ,mode-line-inactive))))
+   `(solaire-fringe-face        ((t (:background ,grey2))))
+   `(solaire-line-number-face   ((t (:inherit line-number :background ,grey2))))
+
+   ;; ------------------------------------------------------------------
+   ;; neotree
+   ;; ------------------------------------------------------------------
+   `(neo-root-dir-face          ((t (:foreground ,purple :weight ,fmn-bold))))
+   `(neo-dir-link-face          ((t (:foreground ,blue))))
+   `(neo-file-link-face         ((t (:foreground ,fg))))
+   `(neo-expand-btn-face        ((t (:foreground ,darkgrey))))
+   `(neo-vc-edited-face         ((t (:foreground ,yellow2))))
+   `(neo-vc-added-face          ((t (:foreground ,green))))
+   `(neo-vc-removed-face        ((t (:foreground ,red :strike-through t))))
+   `(neo-vc-conflict-face       ((t (:foreground ,bright-red :weight ,fmn-bold))))
+   `(neo-vc-ignored-face        ((t (:foreground ,non-text))))
+
+   ;; ------------------------------------------------------------------
+   ;; treemacs
+   ;; ------------------------------------------------------------------
+   `(treemacs-root-face         ((t (:foreground ,purple :weight ,fmn-bold :height 1.1))))
+   `(treemacs-directory-face    ((t (:foreground ,blue))))
+   `(treemacs-file-face         ((t (:foreground ,fg))))
+   `(treemacs-tags-face         ((t (:foreground ,magenta))))
+   `(treemacs-git-added-face    ((t (:foreground ,green))))
+   `(treemacs-git-modified-face ((t (:foreground ,yellow2))))
+   `(treemacs-git-renamed-face  ((t (:foreground ,bright-magenta))))
+   `(treemacs-git-ignored-face  ((t (:foreground ,non-text))))
+   `(treemacs-git-untracked-face ((t (:foreground ,bright-cyan))))
+   `(treemacs-git-conflict-face ((t (:foreground ,bright-red :weight ,fmn-bold))))
+   `(treemacs-on-success-pulse-face ((t (:background ,diff-added-bg))))
+   `(treemacs-on-failure-pulse-face ((t (:background ,diff-removed-bg))))
+
+   ;; ------------------------------------------------------------------
+   ;; dashboard
+   ;; ------------------------------------------------------------------
+   `(dashboard-banner-logo-title ((t (:foreground ,purple :weight ,fmn-bold :height 1.2))))
+   `(dashboard-heading           ((t (:foreground ,blue   :weight ,fmn-bold))))
+   `(dashboard-items-face        ((t (:foreground ,fg))))
+   `(dashboard-no-items-face     ((t (:foreground ,non-text :slant ,fmn-italic))))
+   `(dashboard-footer-face       ((t (:foreground ,comment :slant ,fmn-italic))))
+   `(dashboard-navigator         ((t (:foreground ,cyan))))
+
+   ;; ------------------------------------------------------------------
+   ;; vterm / eat (terminal ANSI palette)
+   ;; ------------------------------------------------------------------
+   `(vterm-color-default ((t (:foreground ,fg :background ,bg))))
+   `(vterm-color-black   ((t (:foreground ,black :background ,black))))
+   `(vterm-color-red     ((t (:foreground ,red :background ,red))))
+   `(vterm-color-green   ((t (:foreground ,green :background ,green))))
+   `(vterm-color-yellow  ((t (:foreground ,yellow2 :background ,yellow2))))
+   `(vterm-color-blue    ((t (:foreground ,blue :background ,blue))))
+   `(vterm-color-magenta ((t (:foreground ,magenta :background ,magenta))))
+   `(vterm-color-cyan    ((t (:foreground ,cyan :background ,cyan))))
+   `(vterm-color-white   ((t (:foreground ,white :background ,white))))
+
+   `(eat-term-color-0 ((t (:foreground ,black))))
+   `(eat-term-color-1 ((t (:foreground ,red))))
+   `(eat-term-color-2 ((t (:foreground ,green))))
+   `(eat-term-color-3 ((t (:foreground ,yellow2))))
+   `(eat-term-color-4 ((t (:foreground ,blue))))
+   `(eat-term-color-5 ((t (:foreground ,magenta))))
+   `(eat-term-color-6 ((t (:foreground ,cyan))))
+   `(eat-term-color-7 ((t (:foreground ,white))))
+
+   ;; ------------------------------------------------------------------
+   ;; posframe / vertico-posframe / which-key-posframe / corfu popups
+   ;; ------------------------------------------------------------------
+   `(posframe-border           ((t (:background ,non-text))))
+   `(vertico-posframe          ((t (:background ,grey2 :foreground ,fg))))
+   `(vertico-posframe-border   ((t (:background ,non-text))))
+   `(which-key-posframe        ((t (:background ,grey2))))
+   `(which-key-posframe-border ((t (:background ,non-text))))
+   `(corfu-popupinfo           ((t (:background ,grey2 :foreground ,fg))))
+   `(corfu-border              ((t (:background ,non-text))))
+
+   ;; ------------------------------------------------------------------
+   ;; doom-modeline / visual-bell flash
+   ;; ------------------------------------------------------------------
+   `(doom-modeline-bar          ((t (:background ,purple))))
+   `(doom-modeline-bar-inactive ((t (:background ,non-text))))
+   `(mode-line-flash            ((t (:background ,bright-red :foreground ,white))))))
 
 ;;;###autoload
 (when load-file-name
