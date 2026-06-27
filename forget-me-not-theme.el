@@ -1551,27 +1551,8 @@ This mirrors the values bound inside the theme's own `let*'.")
    `(dashboard-navigator         ((t (:foreground ,cyan))))
 
    ;; ------------------------------------------------------------------
-   ;; vterm / eat (terminal ANSI palette)
-   ;; ------------------------------------------------------------------
-   `(vterm-color-default ((t (:foreground ,fg :background ,bg))))
-   `(vterm-color-black   ((t (:foreground ,black :background ,black))))
-   `(vterm-color-red     ((t (:foreground ,red :background ,red))))
-   `(vterm-color-green   ((t (:foreground ,green :background ,green))))
-   `(vterm-color-yellow  ((t (:foreground ,yellow2 :background ,yellow2))))
-   `(vterm-color-blue    ((t (:foreground ,blue :background ,blue))))
-   `(vterm-color-magenta ((t (:foreground ,magenta :background ,magenta))))
-   `(vterm-color-cyan    ((t (:foreground ,cyan :background ,cyan))))
-   `(vterm-color-white   ((t (:foreground ,white :background ,white))))
-
-   `(eat-term-color-0 ((t (:foreground ,black))))
-   `(eat-term-color-1 ((t (:foreground ,red))))
-   `(eat-term-color-2 ((t (:foreground ,green))))
-   `(eat-term-color-3 ((t (:foreground ,yellow2))))
-   `(eat-term-color-4 ((t (:foreground ,blue))))
-   `(eat-term-color-5 ((t (:foreground ,magenta))))
-   `(eat-term-color-6 ((t (:foreground ,cyan))))
-   `(eat-term-color-7 ((t (:foreground ,white))))
-
+   ;; (vterm / eat terminal palettes intentionally left to upstream's
+   ;; ansi-color-* block above, which covers all 16 colors.)
    ;; ------------------------------------------------------------------
    ;; posframe / vertico-posframe / which-key-posframe / corfu popups
    ;; ------------------------------------------------------------------
