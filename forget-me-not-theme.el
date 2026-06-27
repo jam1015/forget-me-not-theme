@@ -45,6 +45,12 @@
     (grey                . "#b0cad0")
     (grey1               . "#9dc8d6")
     (grey2               . "#b7e1ef")
+    (grey20              . "#333333")
+    (grey75              . "#bfbfbf")
+    (gray85              . "#d9d9d9")
+    (lb-red              . "#ff0000")
+    (lb-blue             . "#0000ff")
+    (lb-gold             . "#ffd700")
     (non-text            . "#6d98a6")
     (comment             . "#707878")
     (red                 . "#af0000")
@@ -63,13 +69,13 @@
     (bright-cyan         . "#006a7f")
     (purple              . "#5700c7")
     (match-paren         . "#ef009f")
-    (match               . "#d7a7d7")
-    (region              . "#0087d7")
-    (highlight           . "#005faf")
+    (match               . "#87ceeb")
+    (region              . "#66cdaa")
+    (highlight           . "#00ffff")
     (hl-line             . "#a0cbd8")
     (header-line         . "#9dc8d6")
     (mode-line-active    . "#eee8aa")
-    (mode-line-inactive  . "#bfecf6")
+    (mode-line-inactive  . "#d3d3d3")
     (menu                . "#9dc8d6")
     (code-block          . "#b7e1ef")
     (diff-added-bg       . "#a7d7b7")
@@ -137,13 +143,17 @@ This mirrors the values bound inside the theme's own `let*'.")
        (purple "#5700c7")(comment "#707878")
        (yellow1 "#875f00")(yellow2 "#af5f00")
        (grey1 "#9dc8d6")(grey2 "#b7e1ef")
+       (grey20 "#333333")(grey75 "#bfbfbf")(gray85 "#d9d9d9")
+       (lb-red "#ff0000")(lb-blue "#0000ff")(lb-gold "#ffd700")
        (non-text "#6d98a6")
-       (match-paren "#ef009f")(match "#d7a7d7")
-       (mode-line-active "#eee8aa")(mode-line-inactive "#bfecf6")
+       (match-paren "#ef009f")(match "#87ceeb")     ; SkyBlue (light-blue)
+       (mode-line-active "#eee8aa")                 ; PaleGoldenrod (light-blue)
+       (mode-line-inactive "#d3d3d3")               ; LightGray (light-blue)
        (menu "#9dc8d6")
        (header-line "#9dc8d6")
        (hl-line "#a0cbd8")
-       (region "#0087d7")(highlight "#005faf")
+       (region "#66cdaa")                           ; MediumAquamarine (light-blue)
+       (highlight "#00ffff")                        ; cyan (light-blue)
        (diff-added-bg "#a7d7b7")(diff-refine-added-bg "#b7e7c7")
        (diff-added-fg "#005f00")
        (diff-removed-bg "#d7b7b7")(diff-refine-removed-bg "#eacaca")
@@ -184,11 +194,11 @@ This mirrors the values bound inside the theme's own `let*'.")
    `(link-visited
      ((t (:foreground ,magenta :underline t))))
    `(highlight
-     ((t (:background ,white :foreground ,highlight :inverse-video t))))
+     ((t (:background ,highlight))))                        ; cyan (light-blue)
    `(region
-     ((t (:background ,white :foreground ,region :inverse-video t))))
+     ((t (:background ,region))))                           ; MediumAquamarine
    `(secondary-selection
-     ((t (:background ,white :foreground ,bright-cyan :inverse-video t))))
+     ((t (:background ,white :foreground ,black))))         ; light-blue: plain white/black
    `(trailing-whitespace
      ((t (:foreground ,bright-red :inverse-video t))))
    `(line-number
@@ -200,25 +210,26 @@ This mirrors the values bound inside the theme's own `let*'.")
    `(line-number-minor-tick
      ((t (:inherit default :foreground ,darkgrey))))
    `(escape-glyph
-     ((t (:foreground ,red))))
+     ((t (:background ,lb-gold :foreground ,lb-blue
+                      :box (:line-width 1 :color ,lb-blue :style released-button)))))
    `(homoglyph
-     ((t (:inherit 'escape-glyph))))
+     ((t (:inherit escape-glyph))))
    `(nobreak-space
-     ((t (:inherit 'escape-glyph :underline t))))
+     ((t (:inherit escape-glyph :underline t))))
    `(nobreak-hyphen
-     ((t (:inherit 'escape-glyph))))
+     ((t (:inherit escape-glyph))))
    `(mode-line
-     ((t (:background ,mode-line-active :foreground ,fg
-                      :box (:line-width 1 :color ,non-text)))))
+     ((t (:background ,mode-line-active :foreground ,black
+                      :box (:line-width -1 :style released-button)))))
    `(mode-line-inactive
-     ((t (:background ,mode-line-inactive :foreground ,darkgrey
-                      :box (:line-width 1 :color ,non-text)))))
+     ((t (:inherit mode-line :background ,mode-line-inactive :foreground ,grey20
+                   :box (:line-width -1 :color ,grey75) :weight light))))
    `(mode-line-highlight
      ((t (:background ,bg :box (:line-width 1 :color ,non-text)))))
    `(mode-line-emphasis
      ((t (:weight bold))))
    `(mode-line-buffer-id
-     ((t (:weight bold))))
+     ((t (:overline ,lb-red :underline ,lb-red :weight bold))))
    `(header-line
      ((t (:background ,header-line :foreground ,fg :extend t
                       :box (:line-width 1 :color ,darkgrey)))))
@@ -234,12 +245,12 @@ This mirrors the values bound inside the theme's own `let*'.")
    `(minibuffer-prompt
      ((t (:foreground unspecified :weight bold))))
    `(fringe
-     ((t (:foreground ,non-text :background unspecified))))
+     ((t (:background ,gray85))))                           ; light-blue
    `(separator-line
      ((t (:foreground ,non-text :underline t))))
    ;; -scroll-bar
    `(cursor
-     ((t (:background ,fg))))
+     ((t (:background ,lb-red))))                           ; light-blue: red
    ;; -tool-bar
    `(tab-bar
      ((t (:background ,mode-line-inactive :foreground ,darkgrey))))
@@ -323,27 +334,27 @@ This mirrors the values bound inside the theme's own `let*'.")
    `(ansi-color-bright-white
      ((t (:background ,white :foreground ,white))))
 
-   ;; font-lock
+   ;; font-lock  (light-blue palette)
    `(font-lock-string-face
-     ((t (:foreground ,green :weight unspecified :slant unspecified))))
+     ((t (:foreground "#8b008b" :weight unspecified :slant unspecified))))   ; Magenta4
    `(font-lock-comment-face
      ((t (:foreground ,comment :weight unspecified :slant unspecified))))
    `(font-lock-keyword-face
-     ((t (:foreground ,blue :weight unspecified :slant unspecified))))
+     ((t (:foreground "#0000cd" :weight unspecified :slant unspecified))))   ; Blue3
    `(font-lock-preprocessor-face
      ((t (:foreground ,purple :weight unspecified :slant unspecified))))
    `(font-lock-builtin-face
-     ((t (:foreground ,magenta :weight unspecified :slant unspecified))))
+     ((t (:foreground "#b35caf" :weight unspecified :slant unspecified))))
    `(font-lock-type-face
      ((t (:foreground ,yellow :weight unspecified :slant unspecified))))
    `(font-lock-function-name-face
-     ((t (:foreground ,bright-magenta :weight unspecified :slant unspecified))))
+     ((t (:foreground ,lb-red :weight unspecified :slant unspecified))))
    `(font-lock-variable-name-face
      ((t (:foreground ,bright-cyan :weight unspecified :slant unspecified))))
    `(font-lock-constant-face
-     ((t (:foreground ,red :weight unspecified :slant unspecified))))
+     ((t (:foreground "#006d6d" :weight unspecified :slant unspecified))))
    `(font-lock-warning-face
-     ((t (:foreground ,bright-yellow :weight bold :slant unspecified))))
+     ((t (:foreground "#ff4500" :weight bold :slant unspecified))))           ; orange red
 
    `(font-lock-number-face
      ((t (:foreground ,red :weight unspecified :slant unspecified))))
@@ -373,15 +384,17 @@ This mirrors the values bound inside the theme's own `let*'.")
    `(cperl-array-face
      ((t (:inherit font-lock-variable-name-face))))
 
-   ;; isearch & search
+   ;; isearch & search  (light-blue: bg green fg black; lazy bg dark turquoise)
    `(isearch
-     ((t (:background ,white :foreground ,bright-yellow :inverse-video t))))
+     ((t (:background "#00ff00" :foreground ,black))))
    `(isearch-group-1
      ((t (:background ,white :foreground ,yellow2 :inverse-video t))))
    `(isearch-group-2
      ((t (:background ,white :foreground ,yellow1 :inverse-video t))))
    `(lazy-highlight
-     ((t (:background ,white :foreground ,green :inverse-video t))))
+     ((t (:background "#00ced1"))))                         ; dark turquoise
+   `(query-replace
+     ((t (:inherit isearch :background ,white :foreground ,black))))
    `(isearch-fail
      ((t (:background ,diff-removed-bg :foreground ,diff-removed-fg))))
    `(hi-yellow
@@ -406,6 +419,8 @@ This mirrors the values bound inside the theme's own `let*'.")
    ;; replace.el
    `(match
      ((t (:background ,match))))
+   `(next-error
+     ((t (:inherit region :background ,match))))            ; light-blue
 
    ;; global-hl-line-mode
    `(hl-line
