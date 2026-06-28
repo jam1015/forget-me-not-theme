@@ -341,6 +341,7 @@ This mirrors the values bound inside the theme's own `let*'.")
    `(ansi-color-fast-blink ((t (:inverse-video nil))))
    `(eat-term-slow-blink   ((t (:inverse-video nil))))
    `(eat-term-fast-blink   ((t (:inverse-video nil))))
+   `(eat-term-faint        ((t (:foreground ,comment :weight normal))))
 
    ;; font-lock  (light-blue palette)
    `(font-lock-string-face
