@@ -304,7 +304,7 @@ This mirrors the values bound inside the theme's own `let*'.")
    `(ansi-color-black
      ((t (:background ,black :foreground ,black))))
    `(ansi-color-bright-black
-     ((t (:background ,darkgrey :foreground ,darkgrey))))
+     ((t (:background ,darkgrey :foreground "#1f2f35"))))
    `(ansi-color-red
      ((t (:background ,red :foreground ,red))))
    `(ansi-color-bright-red
