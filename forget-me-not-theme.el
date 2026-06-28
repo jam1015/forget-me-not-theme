@@ -334,6 +334,14 @@ This mirrors the values bound inside the theme's own `let*'.")
    `(ansi-color-bright-white
      ((t (:background ,white :foreground ,white))))
 
+   ;; Neutralize blink so fastfetch's `\x1b[5m\x1b[10Nm' palette row
+   ;; doesn't invert bright bg into default fg (which renders as black
+   ;; on a light theme).
+   `(ansi-color-slow-blink ((t (:inverse-video nil))))
+   `(ansi-color-fast-blink ((t (:inverse-video nil))))
+   `(eat-term-slow-blink   ((t (:inverse-video nil))))
+   `(eat-term-fast-blink   ((t (:inverse-video nil))))
+
    ;; font-lock  (light-blue palette)
    `(font-lock-string-face
      ((t (:foreground "#8b008b" :weight unspecified :slant unspecified))))   ; Magenta4
